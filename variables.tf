@@ -35,3 +35,8 @@ variable "suffix" {
   description = "An example suffix used to be appended in bucket's name section"
   type        = string
 }
+
+variable "environment" {
+  description = "The name of the environment"
+  type        = string
+}

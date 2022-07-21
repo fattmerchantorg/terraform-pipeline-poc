@@ -1,1 +1,2 @@
-suffix = "world"
+suffix      = "world"
+environment = "dev"

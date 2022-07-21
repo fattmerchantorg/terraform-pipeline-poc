@@ -7,7 +7,7 @@ module "s3_bucket" {
     aws = aws.env
   }
 
-  bucket = "${terraform.workspace}-stax-pipeline-poc-bucket-${var.suffix}"
+  bucket = "${var.environment}-stax-pipeline-poc-bucket-${var.suffix}"
   acl    = "private"
   tags   = { role = "storage" }
 }
