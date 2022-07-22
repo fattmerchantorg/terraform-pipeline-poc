@@ -24,7 +24,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        continue-on-error: true
+        # continue-on-error: true
   apply-dev:
     needs: "apply-qa"
     name: "apply-dev"
@@ -45,7 +45,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        continue-on-error: true
+        # continue-on-error: true
   apply-prod:
     needs: "apply-dev"
     name: "apply-prod"
@@ -66,4 +66,4 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        continue-on-error: true
+        # continue-on-error: true
