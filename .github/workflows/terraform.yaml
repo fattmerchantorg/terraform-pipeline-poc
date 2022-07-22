@@ -3,20 +3,21 @@ on:
     branches: [main]
 env:
   TERRAFORM_VERSION: "1.1.9"
+  #TF_WORKSPACE: "terraform-pipeline-poc-dev-us-west-2"
 jobs:
   tfsec:
     name: tfsec
     runs-on: ubuntu-20.04
     steps:
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform init
-        run: terraform init
+        run: terraform init -backend=false
       - name: give temporary permissions
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" || exit 1
+        run: sudo chown -R root:root $GITHUB_WORKSPACE
       - name: tfsec
         uses: reviewdog/action-tfsec@v1.7.0
         with:
@@ -30,16 +31,16 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+          # cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform init
-        run: terraform init
+        run: terraform init -backend=false
       - name: give temporary permissions
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" || exit 1
+        run: sudo chown -R root:root $GITHUB_WORKSPACE
       - name: tflint
         uses: reviewdog/action-tflint@v1.10.0
         with:
@@ -48,42 +49,58 @@ jobs:
           filter_mode: file
           tflint_version: ${{ env.TFLINT_VERSION }}
           level: warning
-  fmt:
-    name: terraform fmt
-    runs-on: ubuntu-20.04
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v2.3.4
-      - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.3.2
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-      - name: terraform format
-        run: terraform fmt -recursive -check -diff
   terraform-validate:
     name: terraform validate
     runs-on: ubuntu-20.04
     steps:
       - name: checkout code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          # cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+      - name: terraform init
+        run: terraform init -backend=false
+      - name: terraform validate
+        run: terraform validate
+  misspell:
+    name: misspell
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: give temporary permissions
+        run: sudo chown -R root:root $GITHUB_WORKSPACE
+      - name: misspell
+        uses: reviewdog/action-misspell@v1.7.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          locale: "US"
+          level: warning
+          filter_mode: file
+  fmt:
+    name: terraform fmt
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-      - name: terraform init
-        run: terraform init
-      - name: terraform validate
-        run: terraform validate
+      - name: terraform format
+        run: terraform fmt -recursive -check -diff
+
   checkov:
     name: checkov
     runs-on: ubuntu-20.04
     steps:
       - name: checkout code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
@@ -92,24 +109,9 @@ jobs:
         with:
           directory: .
           quiet: true
-          framework: terraform
-  misspell:
-    name: misspell
-    runs-on: ubuntu-20.04
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v2.3.4
-      - name: give temporary permissions
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" || exit 1
-      - name: misspell
-        uses: reviewdog/action-misspell@v1.7.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          locale: "US"
-          level: warning
-          filter_mode: file
+
   plan-dev:
-    needs: [fmt, terraform-validate, misspell]
+    needs: [fmt, terraform-validate]
     name: "plan-dev"
     runs-on: ubuntu-20.04
     env:
@@ -125,6 +127,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: TF_LOG=info terraform init
+      - name: Terraform validate
+        run: terraform validate
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
@@ -159,7 +163,7 @@ jobs:
         run: exit 1
 
   plan-prod:
-    needs: [fmt, terraform-validate, misspell]
+    needs: [fmt, terraform-validate]
     name: "plan-prod"
     runs-on: ubuntu-20.04
     env:
@@ -175,6 +179,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: TF_LOG=info terraform init
+      - name: Terraform validate
+        run: terraform validate
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
