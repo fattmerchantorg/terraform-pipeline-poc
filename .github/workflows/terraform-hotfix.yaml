@@ -1,6 +1,6 @@
 name: terraform-hotfix
 on:
-  pull_request:
+  push:
     branches: ["hotfix/**"]
 env:
   TERRAFORM_VERSION: "1.1.9"
