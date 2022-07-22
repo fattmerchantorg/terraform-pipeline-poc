@@ -5,7 +5,28 @@ on:
 env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
+  apply-sandbox:
+    name: "apply-sandbox"
+    runs-on: ubuntu-20.04
+    env:
+      TF_WORKSPACE: "terraform-pipeline-poc-sandbox-us-west-2"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: Terraform Init
+        id: init
+        run: TF_LOG=info terraform init
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply
+        continue-on-error: true
   apply-qa:
+    needs: "apply-sandbox"
     name: "apply-qa"
     runs-on: ubuntu-20.04
     env:
@@ -24,7 +45,6 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        continue-on-error: true
   apply-dev:
     needs: "apply-qa"
     name: "apply-dev"
@@ -45,7 +65,6 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        # continue-on-error: true
   apply-prod:
     needs: "apply-dev"
     name: "apply-prod"
@@ -66,4 +85,3 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply
-        # continue-on-error: true
