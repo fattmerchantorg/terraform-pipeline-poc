@@ -1,0 +1,2 @@
+suffix      = "world"
+environment = "qa"
