@@ -24,7 +24,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply -var-file="envs/terraform.qa.tfvars"
-        # continue-on-error: true
+        continue-on-error: true
   apply-dev:
     needs: "apply-qa"
     name: "apply-dev"
