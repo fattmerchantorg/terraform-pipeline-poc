@@ -26,6 +26,7 @@ variable "aws_account_id" {
   type        = map(string)
   default = {
     terraform-pipeline-poc-sandbox-us-west-2 = "144944582707"
+    terraform-pipeline-poc-qa-us-west-2      = "144944582707"
     terraform-pipeline-poc-dev-us-west-2     = "144944582707"
     terraform-pipeline-poc-prod-us-west-2    = "144944582707"
   }
