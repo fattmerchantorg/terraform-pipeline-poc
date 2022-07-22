@@ -107,7 +107,7 @@ jobs:
           directory: .
           quiet: true
   plan-dev:
-    needs: [fmt, terraform-validate, mispell]
+    needs: [fmt, terraform-validate, misspell]
     name: "plan-dev"
     runs-on: ubuntu-20.04
     env:
@@ -158,7 +158,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
   plan-prod:
-    needs: [fmt, terraform-validate, mispell]
+    needs: [fmt, terraform-validate, misspell]
     name: "plan-prod"
     runs-on: ubuntu-20.04
     env:
