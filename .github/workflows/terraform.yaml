@@ -3,28 +3,29 @@ on:
     branches: [main]
 env:
   TERRAFORM_VERSION: "1.1.9"
+  TFLINT_VERSION:
 jobs:
-  tfsec:
-    name: tfsec
-    runs-on: ubuntu-20.04
-    steps:
-      - name: setup terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-      - name: terraform init
-        run: terraform init -backend=false
-      - name: give temporary permissions
-        run: sudo chown -R root:root $GITHUB_WORKSPACE
-      - name: tfsec
-        uses: reviewdog/action-tfsec@v1.15.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_error: true
-          filter_mode: file
-          tfsec_flags: "--exclude-downloaded-modules"
-          level: warning
+  # tfsec:
+  #   name: tfsec
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: setup terraform
+  #       uses: hashicorp/setup-terraform@v1
+  #       with:
+  #         terraform_version: ${{ env.TERRAFORM_VERSION }}
+  #         cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  #     - name: terraform init
+  #       run: terraform init -backend=false
+  #     - name: give temporary permissions
+  #       run: sudo chown -R root:root $GITHUB_WORKSPACE
+  #     - name: tfsec
+  #       uses: reviewdog/action-tfsec@v1.15.0
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         fail_on_error: true
+  #         filter_mode: file
+  #         tfsec_flags: "--exclude-downloaded-modules"
+  #         level: warning
   tflint:
     name: tflint
     runs-on: ubuntu-20.04
@@ -89,7 +90,6 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform format
         run: terraform fmt -recursive -check -diff
-
   checkov:
     name: checkov
     runs-on: ubuntu-20.04
@@ -106,9 +106,8 @@ jobs:
         with:
           directory: .
           quiet: true
-
   plan-dev:
-    needs: [fmt, terraform-validate]
+    needs: [fmt, terraform-validate, mispell]
     name: "plan-dev"
     runs-on: ubuntu-20.04
     env:
@@ -158,9 +157,8 @@ jobs:
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
-
   plan-prod:
-    needs: [fmt, terraform-validate]
+    needs: [fmt, terraform-validate, mispell]
     name: "plan-prod"
     runs-on: ubuntu-20.04
     env:
