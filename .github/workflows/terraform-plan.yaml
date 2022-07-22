@@ -94,7 +94,7 @@ jobs:
       - name: terraform format
         run: terraform fmt -recursive -check -diff
       - name: test
-        run: echo ${{ github.event.pull_request.base.ref }}
+        run: echo ${{ github.event.pull_request.head.ref }}
   checkov:
     name: checkov
     runs-on: ubuntu-20.04
