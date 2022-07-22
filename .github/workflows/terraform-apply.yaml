@@ -6,7 +6,7 @@ env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
   apply-sandbox:
-    if: startsWith(${{ github.event.pull_request.head.ref }}, "hotfix") != true
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     name: "apply-sandbox"
     runs-on: ubuntu-20.04
     env:
@@ -27,7 +27,7 @@ jobs:
         run: terraform apply
         continue-on-error: true
   apply-qa:
-    if: startsWith(${{ github.event.pull_request.head.ref }}, "hotfix") != true
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: "apply-sandbox"
     name: "apply-qa"
     runs-on: ubuntu-20.04
@@ -48,7 +48,7 @@ jobs:
         id: apply
         run: terraform apply
   apply-dev:
-    if: startsWith(${{ github.event.pull_request.head.ref }}, "hotfix") != true
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: "apply-qa"
     name: "apply-dev"
     runs-on: ubuntu-20.04
