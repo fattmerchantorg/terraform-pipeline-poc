@@ -190,7 +190,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = 
+            const output = \`
             #### Terraform Workspace :dart: \`${{env.TF_WORKSPACE}}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
