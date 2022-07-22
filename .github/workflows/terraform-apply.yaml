@@ -23,8 +23,8 @@ jobs:
         run: TF_LOG=info terraform init
       - name: Terraform Apply
         id: apply
-        run: terraform apply -var-file="envs/terraform.qa.tfvars"
-        # continue-on-error: true
+        run: terraform apply
+        continue-on-error: true
   apply-dev:
     needs: "apply-qa"
     name: "apply-dev"
