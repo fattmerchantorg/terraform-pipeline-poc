@@ -26,6 +26,7 @@ variable "aws_account_id" {
   type        = map(string)
   default = {
     terraform-pipeline-poc-sandbox-us-west-2 = "144944582707"
+    terraform-pipeline-poc-qa-us-west-2      = "144944582707"
     terraform-pipeline-poc-dev-us-west-2     = "144944582707"
     terraform-pipeline-poc-prod-us-west-2    = "144944582707"
   }
@@ -33,5 +34,10 @@ variable "aws_account_id" {
 
 variable "suffix" {
   description = "An example suffix used to be appended in bucket's name section"
+  type        = string
+}
+
+variable "environment" {
+  description = "The name of the environment"
   type        = string
 }

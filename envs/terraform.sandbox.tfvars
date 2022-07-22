@@ -1,1 +1,2 @@
-suffix = "hello"
+suffix      = "hello"
+environment = "sandbox"

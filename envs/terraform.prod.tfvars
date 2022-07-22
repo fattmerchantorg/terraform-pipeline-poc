@@ -1,1 +1,2 @@
-suffix = "bye"
+suffix      = "bye"
+environment = "prod"

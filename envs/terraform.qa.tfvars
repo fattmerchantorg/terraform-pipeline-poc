@@ -1,2 +1,2 @@
 suffix      = "world"
-environment = "dev"
+environment = "qa"

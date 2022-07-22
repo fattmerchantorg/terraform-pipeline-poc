@@ -25,7 +25,3 @@ override.tf.json
 
 # Crash log files
 *.log
-
-# Sensitive data
-*.tfvars
-
