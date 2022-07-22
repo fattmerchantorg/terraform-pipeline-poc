@@ -3,7 +3,6 @@ on:
     branches: [main]
 env:
   TERRAFORM_VERSION: "1.1.9"
-  #TF_WORKSPACE: "terraform-pipeline-poc-dev-us-west-2"
 jobs:
   tfsec:
     name: tfsec
@@ -19,7 +18,7 @@ jobs:
       - name: give temporary permissions
         run: sudo chown -R root:root $GITHUB_WORKSPACE
       - name: tfsec
-        uses: reviewdog/action-tfsec@v1.7.0
+        uses: reviewdog/action-tfsec@v1.15.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
@@ -36,7 +35,6 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-          # cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform init
         run: terraform init -backend=false
       - name: give temporary permissions
@@ -59,7 +57,6 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-          # cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform init
         run: terraform init -backend=false
       - name: terraform validate
