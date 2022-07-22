@@ -1,3 +1,3 @@
 ### test
 
-typo: namae
+typo: name
