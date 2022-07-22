@@ -190,12 +190,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `\`${{env.TF_WORKSPACE}}\`
+            const output = 
+            #### Terraform Workspace :dart: \`${{env.TF_WORKSPACE}}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
 
-            \`\`\` 
+            \`\`\`hcl 
             ${process.env.PLAN} 
             \`\`\`
 
