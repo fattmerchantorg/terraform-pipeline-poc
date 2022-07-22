@@ -130,7 +130,7 @@ jobs:
         run: terraform validate
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan
         continue-on-error: true
       - name: Update Pull Request
         uses: actions/github-script@0.9.0
@@ -144,7 +144,7 @@ jobs:
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
 
-            \`\`\` 
+            \`\`\`hcl 
             ${process.env.PLAN} 
             \`\`\`
 
@@ -190,13 +190,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = \`
-            #### Terraform Workspace :dart: \`${{env.TF_WORKSPACE}}\`
+            const output = `\`${{env.TF_WORKSPACE}}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
 
-            \`\`\`hcl 
+            \`\`\` 
             ${process.env.PLAN} 
             \`\`\`
 
