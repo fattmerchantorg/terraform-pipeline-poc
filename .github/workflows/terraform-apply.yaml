@@ -5,6 +5,12 @@ on:
 env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
+  test:
+    name: test behavior
+    runs-on: ubuntu-20.04
+    steps:
+      - name: test commit
+        run: echo ${{ contains(github.event.commits.*.message , 'hotfix') }}
   apply-sandbox:
     if: false == ${{ contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"
