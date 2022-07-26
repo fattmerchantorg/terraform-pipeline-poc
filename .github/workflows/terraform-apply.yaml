@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: test commit
         run: echo ${{ contains(github.event.commits.*.message , 'hotfix') }}
+      - name: Logging
+        run: |
+          echo "${{toJSON(github.event)}}"
   apply-sandbox:
     if: false == ${{ contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"
