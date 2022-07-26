@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: test commit
-        run: echo ${{ contains(github.event.commits[*].message , 'hotfix') }}
+        run: echo ${{ contains(github.event.head_commit.message , 'hotfix') }}
       - name: Logging
         run: |
           echo "${{toJSON(github.event)}}"
