@@ -5,117 +5,51 @@ on:
 env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
-  # test:
-  #   name: test behavior
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: test commit
-  #       run: echo ${{ contains(github.event.head_commit.message , 'hotfix') }}
-  #     - name: Logging
-  #       run: |
-  #         echo "${{toJSON(github.event)}}"
-  apply-sandbox:
+  sandbox:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
-    name: "apply-sandbox"
-    runs-on: ubuntu-20.04
-    env:
-      TF_WORKSPACE: "terraform-pipeline-poc-sandbox-us-west-2"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform Init
-        id: init
-        run: TF_LOG=info terraform init
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply
-        continue-on-error: true
-  apply-qa:
+    name: sandbox
+    needs: validate
+    uses: ./.github/workflows/apply.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  qa:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
-    needs: "apply-sandbox"
-    name: "apply-qa"
-    runs-on: ubuntu-20.04
-    env:
-      TF_WORKSPACE: "terraform-pipeline-poc-qa-us-west-2"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform Init
-        id: init
-        run: TF_LOG=info terraform init
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply
-  apply-dev:
+    name: qa
+    needs: sandbox
+    uses: ./.github/workflows/apply.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  dev:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
-    needs: "apply-qa"
-    name: "apply-dev"
-    runs-on: ubuntu-20.04
-    env:
-      TF_WORKSPACE: "terraform-pipeline-poc-dev-us-west-2"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform Init
-        id: init
-        run: TF_LOG=info terraform init
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply
-  apply-prod:
-    if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
-    needs: "apply-dev"
-    name: "apply-prod"
-    runs-on: ubuntu-20.04
-    env:
-      TF_WORKSPACE: "terraform-pipeline-poc-prod-us-west-2"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform Init
-        id: init
-        run: TF_LOG=info terraform init
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply
-  ## TODO: Implement Conditional to avoid repeating code
-  apply-prod-hotfix:
+    name: dev
+    needs: qa
+    uses: ./.github/workflows/apply.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  prod:
+    name: prod
+    needs: dev
+    uses: ./.github/workflows/apply.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  hotfix-prod:
     if: ${{ contains(github.event.head_commit.message , 'hotfix') }}
-    name: "apply-prod-hotfix"
-    runs-on: ubuntu-20.04
-    env:
-      TF_WORKSPACE: "terraform-pipeline-poc-prod-us-west-2"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform Init
-        id: init
-        run: TF_LOG=info terraform init
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply
+    name: hotfix-prod
+    uses: ./.github/workflows/apply.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
