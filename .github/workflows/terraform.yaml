@@ -7,7 +7,7 @@ env:
 
 jobs:
   validate:
-    uses: .github/workflows/reusable/validate.yaml
+    uses: .github/workflows/reusable/validate.yaml@2bdc103e637cc040f460c0d99a8ab555926c26bc
     with:
       terraform_version: ${{ env.TERRAFORM_VERSION }}
       github_token: ${{ secrets.GITHUB_TOKEN }}
