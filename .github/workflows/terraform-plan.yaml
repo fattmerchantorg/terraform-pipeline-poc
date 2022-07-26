@@ -1,0 +1,54 @@
+name: terraform-plan
+on:
+  pull_request:
+    branches: [main]
+env:
+  TERRAFORM_VERSION: "1.1.9"
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yaml
+    with:
+      terraform_version: "1.1.9"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  security-compliance:
+    uses: ./.github/workflows/security-compliance.yaml
+    with:
+      terraform_version: "1.1.9"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  sandbox:
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    needs: validate
+    uses: ./.github/workflows/plan.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  qa:
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    needs: validate
+    uses: ./.github/workflows/plan.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  dev:
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    needs: validate
+    uses: ./.github/workflows/plan.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
+  prod:
+    needs: validate
+    uses: ./.github/workflows/plan.yaml
+    with:
+      terraform_version: "1.1.9"
+      tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
+    secrets:
+      tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
