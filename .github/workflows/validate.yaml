@@ -20,7 +20,7 @@ jobs:
       - name: setup terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: ${{ input.terraform_version }}
+          terraform_version: ${{ inputs.terraform_version }}
       - name: terraform init
         run: terraform init -backend=false
       - name: give temporary permissions
@@ -31,7 +31,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
           filter_mode: file
-          tflint_version: ${{ input.tflint_version }}
+          tflint_version: ${{ inputs.tflint_version }}
           level: warning
   terraform-validate:
     runs-on: ubuntu-20.04
@@ -41,7 +41,7 @@ jobs:
       - name: setup terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: ${{ input.terraform_version }}
+          terraform_version: ${{ inputs.terraform_version }}
       - name: terraform init
         run: terraform init -backend=false
       - name: terraform validate
@@ -68,7 +68,7 @@ jobs:
       - name: setup terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: ${{ input.terraform_version }}
+          terraform_version: ${{ inputs.terraform_version }}
           cli_config_credentials_token: ${{ secrets.tf_cloud_token }}
       - name: terraform format
         run: terraform fmt -recursive -check -diff
