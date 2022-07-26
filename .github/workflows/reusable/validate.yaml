@@ -1,18 +1,18 @@
 name: terraform-validate
 on:
   workflow_call:
-  inputs:
-    terraform_version:
-      required: true
-      type: string
-    tflint_version:
-      required: false
-      type: string
-  secrets:
-    github_token:
-      required: true
-    tf_cloud_token:
-      required: true
+    inputs:
+      terraform_version:
+        required: true
+        type: string
+      tflint_version:
+        required: false
+        type: string
+    secrets:
+      github_token:
+        required: true
+      tf_cloud_token:
+        required: true
 jobs:
   tflint:
     runs-on: ubuntu-20.04
