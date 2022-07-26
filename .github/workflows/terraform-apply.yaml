@@ -6,6 +6,7 @@ env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
   apply-sandbox:
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"
     runs-on: ubuntu-20.04
     env:
@@ -26,6 +27,7 @@ jobs:
         run: terraform apply
         continue-on-error: true
   apply-qa:
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-sandbox"
     name: "apply-qa"
     runs-on: ubuntu-20.04
@@ -46,6 +48,7 @@ jobs:
         id: apply
         run: terraform apply
   apply-dev:
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-qa"
     name: "apply-dev"
     runs-on: ubuntu-20.04
@@ -66,8 +69,30 @@ jobs:
         id: apply
         run: terraform apply
   apply-prod:
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-dev"
     name: "apply-prod"
+    runs-on: ubuntu-20.04
+    env:
+      TF_WORKSPACE: "terraform-pipeline-poc-prod-us-west-2"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: Terraform Init
+        id: init
+        run: TF_LOG=info terraform init
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply
+  ## TODO: Implement Conditional to avoid repeating code
+  apply-prod-hotfix:
+    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
+    name: "apply-prod-hotfix"
     runs-on: ubuntu-20.04
     env:
       TF_WORKSPACE: "terraform-pipeline-poc-prod-us-west-2"
