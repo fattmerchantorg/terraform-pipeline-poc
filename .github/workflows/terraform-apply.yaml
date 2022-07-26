@@ -13,8 +13,8 @@ jobs:
         name: full_ref
       - run: echo ${{ github.event.base_ref }}
         name: base_ref
-      - run: echo ${{ github.event.head_commit.message }}
-        name: head_commit_message
+      # - run: echo ${{ github.event.head_commit.message }}
+      #   name: head_commit_message
       - name: Everything
         run: |
           echo "${{toJSON(github.event)}}"
