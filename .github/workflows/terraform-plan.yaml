@@ -266,6 +266,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
   plan-prod:
+    if: ${{ startsWith(github.event.pull_request.head.ref , 'new') }}
     needs: [fmt, terraform-validate, misspell]
     name: "plan-prod"
     runs-on: ubuntu-20.04
@@ -371,7 +372,7 @@ jobs:
         run: exit 1
 
   apply-prod-hotfix:
-    if: ${{ startsWith(github.event.pull_request.head.ref , 'new') }}
+    if: ${{ startsWith(github.event.pull_request.head.ref , 'new') && github.event.action == 'closed' && github.event.pull_request.merged == true  }}
     needs: [fmt, terraform-validate, misspell, plan-prod-hotfix]
     name: "apply-prod-hotfix"
     runs-on: ubuntu-20.04
