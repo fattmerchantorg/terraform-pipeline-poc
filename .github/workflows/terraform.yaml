@@ -9,6 +9,6 @@ jobs:
   validate:
     uses: ./.github/workflows/validate.yaml
     with:
-      terraform_version: "1.1.9"
+      terraform_version: ${{ env.TERRAFORM_VERSION }}
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
