@@ -266,7 +266,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
   plan-prod:
-    if: ${{ startsWith(github.event.pull_request.head.ref , 'new') }}
+    if: ${{ !startsWith(github.event.pull_request.head.ref , 'new') }}
     needs: [fmt, terraform-validate, misspell]
     name: "plan-prod"
     runs-on: ubuntu-20.04
