@@ -5,21 +5,6 @@ on:
 env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
-  checkov:
-    name: test
-    runs-on: ubuntu-20.04
-    steps:
-      - run: echo ${{ github.event.ref }}
-        name: full_ref
-      - run: echo ${{ github.event.base_ref }}
-        name: base_ref
-      # - run: echo ${{ github.event.head_commit.message }}
-      #   name: head_commit_message
-      # - name: Everything
-      #   run: |
-      #     echo "${{toJSON(github.event)}}"
-      # - name: test
-      #   run: echo ${{ !contains(github.event.commits.*.message , 'hotfix') }}
   apply-sandbox:
     if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"

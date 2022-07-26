@@ -93,8 +93,6 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
       - name: terraform format
         run: terraform fmt -recursive -check -diff
-      # - name: test
-      #   run: echo ${{ github.event.pull_request.head.ref }}
   checkov:
     name: checkov
     runs-on: ubuntu-20.04
@@ -112,7 +110,7 @@ jobs:
           directory: .
           quiet: true
   plan-sandbox:
-    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: [fmt, terraform-validate, misspell]
     name: "plan-sandbox"
     runs-on: ubuntu-20.04
@@ -164,7 +162,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
   plan-qa:
-    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: [fmt, terraform-validate, misspell]
     name: "plan-qa"
     runs-on: ubuntu-20.04
@@ -216,7 +214,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
   plan-dev:
-    if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: [fmt, terraform-validate, misspell]
     name: "plan-dev"
     runs-on: ubuntu-20.04
