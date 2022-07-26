@@ -20,7 +20,7 @@ jobs:
           echo "${{toJSON(github.event)}}"
   apply-sandbox:
     # if: ${{ !startsWith(github.event.head_commit.message , 'hotfix') }}
-    if: ${{ !contains(github.event.commits.*.message , 'hotfix:') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"
     runs-on: ubuntu-20.04
     env:
@@ -42,7 +42,7 @@ jobs:
         continue-on-error: true
   apply-qa:
     # if: ${{ !startsWith(github.event.head_commit.message , 'hotfix') }}
-    if: ${{ !contains(github.event.commits.*.message , 'hotfix:') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-sandbox"
     name: "apply-qa"
     runs-on: ubuntu-20.04
@@ -64,7 +64,7 @@ jobs:
         run: terraform apply
   apply-dev:
     # if: ${{ !startsWith(github.event.head_commit.message , 'hotfix') }}
-    if: ${{ !contains(github.event.commits.*.message , 'hotfix:') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-qa"
     name: "apply-dev"
     runs-on: ubuntu-20.04
@@ -107,7 +107,7 @@ jobs:
   ## TODO: Implement Conditional to avoid repeating code
   apply-prod-hotfix:
     # if: ${{ startsWith(github.event.head_commit.message , 'hotfix') }}
-    if: ${{ !contains(github.event.commits.*.message , 'hotfix:') }}
+    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-prod-hotfix"
     runs-on: ubuntu-20.04
     env:
