@@ -21,7 +21,7 @@ jobs:
       # - name: test
       #   run: echo ${{ !contains(github.event.commits.*.message , 'hotfix') }}
   apply-sandbox:
-    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     name: "apply-sandbox"
     runs-on: ubuntu-20.04
     env:
@@ -42,7 +42,7 @@ jobs:
         run: terraform apply
         continue-on-error: true
   apply-qa:
-    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-sandbox"
     name: "apply-qa"
     runs-on: ubuntu-20.04
@@ -63,7 +63,7 @@ jobs:
         id: apply
         run: terraform apply
   apply-dev:
-    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-qa"
     name: "apply-dev"
     runs-on: ubuntu-20.04
@@ -84,7 +84,7 @@ jobs:
         id: apply
         run: terraform apply
   apply-prod:
-    if: ${{ contains(github.event.commits.*.message , 'hotfix') }}
+    if: ${{ !contains(github.event.commits.*.message , 'hotfix') }}
     needs: "apply-dev"
     name: "apply-prod"
     runs-on: ubuntu-20.04
