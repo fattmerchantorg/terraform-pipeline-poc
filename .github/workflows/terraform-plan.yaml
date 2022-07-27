@@ -8,8 +8,11 @@ jobs:
   env-setup:
     runs-on: ubuntu-20.04
     steps:
-      - name: set shared environment variables
+      - id: terraform_validate
+        name: set shared environment variables
         run: echo ::set-output name=terraform_version::$(echo $TERRAFORM_VERSION)
+    outputs:
+      terraform_version: ${{ steps.terraform_validate.outputs.terraform_validate }}
   validate:
     needs: env-setup
     uses: ./.github/workflows/validate.yaml
