@@ -11,6 +11,7 @@ jobs:
       - name: set shared environment variables
         run: echo ::set-output name=terraform_version::$(echo $TERRAFORM_VERSION)
   validate:
+    needs: env-setup
     uses: ./.github/workflows/validate.yaml
     with:
       terraform_version: ${{ needs.env-setup.outputs.terraform_version }}
