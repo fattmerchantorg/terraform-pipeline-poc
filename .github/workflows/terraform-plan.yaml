@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: set shared environment variables
-        run: echo ::set-output terraform_version::$(echo $TERRAFORM_VERSION)
+        run: echo ::set-output name=terraform_version::$(echo $TERRAFORM_VERSION)
   validate:
     uses: ./.github/workflows/validate.yaml
     with:
