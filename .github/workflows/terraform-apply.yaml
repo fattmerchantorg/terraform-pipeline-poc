@@ -6,7 +6,7 @@ jobs:
   sandbox:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
     name: sandbox
-    uses: ./.github/workflows/apply.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/apply.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
@@ -16,7 +16,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
     name: qa
     needs: sandbox
-    uses: ./.github/workflows/apply.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/apply.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
@@ -26,7 +26,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message , 'hotfix') }}
     name: dev
     needs: qa
-    uses: ./.github/workflows/apply.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/apply.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
@@ -35,7 +35,7 @@ jobs:
   prod:
     name: prod
     needs: dev
-    uses: ./.github/workflows/apply.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/apply.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
@@ -44,7 +44,7 @@ jobs:
   hotfix-prod:
     if: ${{ contains(github.event.head_commit.message , 'hotfix') }}
     name: hotfix-prod
-    uses: ./.github/workflows/apply.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/apply.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-prod-us-west-2"

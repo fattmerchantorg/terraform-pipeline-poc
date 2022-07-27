@@ -4,13 +4,13 @@ on:
     branches: [main]
 jobs:
   validate:
-    uses: ./.github/workflows/validate.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/validate.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   security-compliance:
-    uses: ./.github/workflows/security-compliance.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/security-compliance.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
     secrets:
@@ -18,7 +18,7 @@ jobs:
   sandbox:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: validate
-    uses: ./.github/workflows/plan.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
@@ -27,7 +27,7 @@ jobs:
   qa:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: validate
-    uses: ./.github/workflows/plan.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
@@ -36,7 +36,7 @@ jobs:
   dev:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: validate
-    uses: ./.github/workflows/plan.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
@@ -44,7 +44,7 @@ jobs:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   prod:
     needs: validate
-    uses: ./.github/workflows/plan.yaml
+    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
