@@ -5,19 +5,10 @@ on:
 env:
   TERRAFORM_VERSION: "1.1.9"
 jobs:
-  env-setup:
-    runs-on: ubuntu-20.04
-    steps:
-      - id: terraform_validate
-        name: set shared environment variables
-        run: echo ::set-output name=terraform_version::$(echo $TERRAFORM_VERSION)
-    outputs:
-      terraform_version: ${{ steps.terraform_validate.outputs.terraform_validate }}
   validate:
-    needs: env-setup
     uses: ./.github/workflows/validate.yaml
     with:
-      terraform_version: ${{ needs.env-setup.outputs.terraform_version }}
+      terraform_version: "1.1.9"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   security-compliance:
