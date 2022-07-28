@@ -10,4 +10,4 @@ module "s3_bucket" {
   bucket = "stax-${var.environment}-pipeline-poc-bucket-${var.suffix}"
   acl    = "private"
   tags   = { role = "storage" }
- }
+}
