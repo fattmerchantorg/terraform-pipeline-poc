@@ -19,8 +19,8 @@ jobs:
         with:
           repository: fattmerchantorg/terraform-actions
           token: ${{ secrets.GITHUB_PAT_TOKEN }}
-          path: ./.github/custom-workflows/
-          ref: refs/tags/0.1.0
+          path: ./.github/custom-workflows
+          # ref: refs/tags/0.1.0
   validate:
     needs: pull-workflows
     uses: ./.github/custom-workflows/validate.yaml
