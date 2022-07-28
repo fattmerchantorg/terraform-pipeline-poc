@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   pull-workflows:
-    uses: ./.github/workflows/pull-workflows.yaml
+    uses: ./.github/workflows/pull-workflows.yaml@main
     with:
       repository: fattmerchantorg/terraform-actions
       path: ./.github/custom-workflows/
