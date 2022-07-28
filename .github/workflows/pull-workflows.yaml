@@ -1,0 +1,27 @@
+name: pull-custom-workflows
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string
+      ref:
+        required: false
+        type: string
+    secrets:
+      github_pat_token:
+        required: true
+jobs:
+  pull-workflows:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout custom workflows
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ inputs.repository }}
+          token: ${{ inputs.github_pat_token }}
+          path: ${{ inputs.path }}
+          ref: ${{ inputs.ref }}

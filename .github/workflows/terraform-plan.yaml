@@ -3,22 +3,32 @@ on:
   pull_request:
     branches: [main]
 jobs:
+  pull-workflows:
+    uses: .github/workflows/pull-workflows.yaml
+    with:
+      repository: fattmerchantorg/terraform-actions
+      path: ./.github/custom-workflows/
+      ref: refs/tags/0.1.0
+    secrets:
+      github_pat_token: ${{ secrets.GH_PAT_TOKEN }}
   validate:
-    uses: fattmerchantorg/terraform-actions/.github/workflows/validate.yaml@0.1.0
+    needs: pull-workflows
+    uses: .github/custom-workflows/validate.yaml
     with:
       terraform_version: "1.1.9"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   security-compliance:
-    uses: fattmerchantorg/terraform-actions/.github/workflows/security-compliance.yaml@0.1.0
+    needs: pull-workflows
+    uses: .github/custom-workflows/security-compliance.yaml
     with:
       terraform_version: "1.1.9"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   sandbox:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
-    needs: validate
-    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
+    needs: [pull-workflows, validate]
+    uses: .github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
@@ -26,8 +36,8 @@ jobs:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   qa:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
-    needs: validate
-    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
+    needs: [pull-workflows, validate]
+    uses: .github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
@@ -35,16 +45,16 @@ jobs:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   dev:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
-    needs: validate
-    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
+    needs: [pull-workflows, validate]
+    uses: .github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   prod:
-    needs: validate
-    uses: fattmerchantorg/terraform-actions/.github/workflows/plan.yaml@0.1.0
+    needs: [pull-workflows, validate]
+    uses: .github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
