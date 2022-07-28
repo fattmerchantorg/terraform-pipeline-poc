@@ -7,7 +7,7 @@ module "s3_bucket" {
     aws = aws.env
   }
 
-  bucket = "${var.environment}-stax-pipeline-poc-bucket-${var.suffix}"
+  bucket = "stax-${var.environment}-pipeline-poc-bucket-${var.suffix}"
   acl    = "private"
   tags   = { role = "storage" }
-}
+ }
