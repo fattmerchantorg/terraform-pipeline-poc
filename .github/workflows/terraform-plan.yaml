@@ -4,7 +4,7 @@ on:
     branches: [main]
 jobs:
   pull-workflows:
-    uses: .github/workflows/pull-workflows.yaml
+    uses: ./.github/workflows/pull-workflows.yaml
     with:
       repository: fattmerchantorg/terraform-actions
       path: ./.github/custom-workflows/
@@ -13,14 +13,14 @@ jobs:
       github_pat_token: ${{ secrets.GH_PAT_TOKEN }}
   validate:
     needs: pull-workflows
-    uses: .github/custom-workflows/validate.yaml
+    uses: ./.github/custom-workflows/validate.yaml
     with:
       terraform_version: "1.1.9"
     secrets:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   security-compliance:
     needs: pull-workflows
-    uses: .github/custom-workflows/security-compliance.yaml
+    uses: ./.github/custom-workflows/security-compliance.yaml
     with:
       terraform_version: "1.1.9"
     secrets:
@@ -28,7 +28,7 @@ jobs:
   sandbox:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: [pull-workflows, validate]
-    uses: .github/custom-workflows/plan.yaml
+    uses: ./.github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-sandbox-us-west-2"
@@ -37,7 +37,7 @@ jobs:
   qa:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: [pull-workflows, validate]
-    uses: .github/custom-workflows/plan.yaml
+    uses: ./.github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-qa-us-west-2"
@@ -46,7 +46,7 @@ jobs:
   dev:
     if: ${{ !startsWith(github.event.pull_request.head.ref , 'hotfix') }}
     needs: [pull-workflows, validate]
-    uses: .github/custom-workflows/plan.yaml
+    uses: ./.github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-dev-us-west-2"
@@ -54,7 +54,7 @@ jobs:
       tf_cloud_token: ${{ secrets.TF_CLOUD_TOKEN }}
   prod:
     needs: [pull-workflows, validate]
-    uses: .github/custom-workflows/plan.yaml
+    uses: ./.github/custom-workflows/plan.yaml
     with:
       terraform_version: "1.1.9"
       tf_workspace: "terraform-pipeline-poc-prod-us-west-2"
